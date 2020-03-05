@@ -1,7 +1,4 @@
-var btnNew = document.getElementById('btnAdd');
-btnNew.onclick = addNewItem;
-
-var totalItems = 0;
+var totalOfItems = 0;
 
 function updateItemstatus(){
     var chId = this.id.replace('cb_', '');
@@ -18,40 +15,83 @@ function renameItem(){
     //this === span
     var newText = prompt("항목을 수정하시겠습니까?");
     if(!newText || newText === "" || newText === " ")return false; // blank 방지
+    var spanId = this.Id.replace('pencilIcon_', '');
+    var span = document.getElementById('item_' + spnaId);
 
-    this.innerText = newText;
+    span.innerText = newText;
 }
 
-function removeItem(){
+
+var donelist = document.getElementById('donelist');
+function moveItem(){
     //this === span
     var listItemId = this.id.replace('li_', '');
+    var listItem = document.getElementById('li_' + listItemId);
+    var listItemParentId = listItem.parentElement;
+    //console.log(listItemParentId);
+    if(listItemParentId == donelist){
+        todolist.appendChild(listItem);
+    } else {
+        donelist.appendChild(listItem);
+    }
+}
+
+function deleteItem(donelist){
+    //this === li
+    var listItemId = this.id.replace('minusIcon_', '');
     document.getElementById('li_' + listItemId).style.display = "none";
 }
 
+function mouseover(){
+    //this === li
+    var pencilIconId = this.id.replace('li_', '');
+    var pencilIcon = document.getElementById('pencilIcon_' + pencilIconId);
+    var minusIcon = document.getElementById('minusIcon_' + pencilIconId);
+
+    pencilIcon.style.visibility = 'visible';
+    minusIcon.style.visibility = 'visible';
+}
+
+function mouseout(){
+    //this === li
+    var pencilIconId = this.id.replace('li_', '');
+    var pencilIcon = document.getElementById('pencilIcon_' + pencilIconId);
+    var minusIcon = document.getElementById('minusIcon_' + pencilIconId);
+
+    pencilIcon.style.visibility = 'hidden';
+    minusIcon.style.visibility = 'hidden';
+}
+
 function addNewItem(list, itemText){
+    totalOfItems++;
 
     var date = new Date();
     var id = "" + date.getHours() + date.getMinutes() + date.getSeconds() + date.getMilliseconds();
 
-    totalItems++;
-
     var listItem = document.createElement('li');
     listItem.id = 'li_' + id;
-    listItem.ondblclick = removeItem;
-
-    var checkBox = document.createElement('input');
-    checkBox.type = 'checkBox';
-    checkBox.id = 'cb_' + totalItems;
-    checkBox.onclick = updateItemstatus;
+    listItem.ondblclick = moveItem;
+    listItem.addEventListener('mouseover', mouseover);
+    listItem.addEventListener('mouseout', mouseout);
 
     var span = document.createElement('span');
     span.id = 'item_' + id;
     span.innerText = itemText;
-    span.onclick = renameItem;
+
+    var pencilIcon = document.createElement('i');
+    pencilIcon.className = 'fas fa-edit';
+    pencilIcon.id = 'pencilIcon_' + id;
+    pencilIcon.onclick = renameItem;
+
+    var minusIcon = document.createElement('i');
+    minusIcon.className = 'fas fa-minus';
+    minusIcon.id = 'minusIcon_' + id;
+    minusIcon.onclick = deleteItem;
 
 
-    listItem.appendChild(checkBox);
     listItem.appendChild(span);
+    listItem.appendChild(minusIcon);
+    listItem.appendChild(pencilIcon);
     list.appendChild(listItem);
 }
 
@@ -68,19 +108,3 @@ inputText.onkeyup = function(event){
         inputText.Select();
     }
 };
-
-var btnNew = document.getElementById('btnAdd');
-
-btnNew.onclick = function(){
-    var inputText = document.getElementById('inputText');
-    var itemText = inputText.Value;
-
-    if(!itemText || itemText === "" || itemText ===" ") return false; // blank 방지
-
-
-    addNewItem(document.getElementById('todolist'), itemText);
-
-};
-
-    var list = document.getElementById('todolist');
-    list.appendChild(listItem);
